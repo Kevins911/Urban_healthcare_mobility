@@ -1,0 +1,36 @@
+## 6/30/2017
+## Goal: extract hospital and location data from dianping databases using SQLite
+## Extracts from shanghai-dianping-updated.db
+
+==========================deletes newtable================================================================================
+DROP table `newtable`;
+
+==========================creates newtable with desired coumn names and specifies what type of data goes inside==========
+CREATE TABLE newtable (business_id INTEGER PRIMARY KEY,name TEXT,address TEXT,latitude real,longitude real,avg_rating real,`url_pattern` TEXT,`category` TEXT);
+
+
+==========================uses INSERT to put desired columns data from venues into newtable================================
+INSERT INTO newtable (business_id, name, address, latitude,longitude,avg_rating)
+       SELECT business_id, name, address, latitude,longitude,avg_rating
+       FROM venues
+	  
+==========================updates newtable with category names from venue_categories=======================================
+UPDATE newtable
+SET category=(SELECT venue_categories.category FROM venue_categories WHERE venue_categories.business_id=newtable.business_id);
+
+==========================updates newtable with category names from venue_categories=======================================
+UPDATE newtable
+SET url_pattern=(SELECT categories.url_pattern FROM categories WHERE categories.category=newtable.category);
+
+==========================medical hospital query===========================================================================
+SELECT * FROM newtable 
+WHERE category like '医疗院'
+
+========================='like shanghai or hospital'======================================================================= 
+SELECT * FROM newtable 
+WHERE category like '%上海%' OR '%院%'
+
+========================='like medical or hospital'=========================================================================
+SELECT * FROM newtable 
+WHERE category like '%医%' OR '%院%'
+========'2707 rows returned'===============================================================================================
