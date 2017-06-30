@@ -1,0 +1,35 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Jun 23 11:53:43 2017
+
+@author: Kevin STAM
+"""
+
+import networkx as nx
+graph = nx.read_gexf('C:\\Local\\Kevins\\Downloads\\shanghai-region.gexf')
+print nx.info(graph)
+print graph
+
+import csv
+
+# As lat and lon are on two different lists, creates a new list for couple pairs of lon, lat to be added
+lat_lon=[]
+
+# opens the CSV file in python
+with open('C:\\Local\\Kevins\Downloads\\shanghai_hospital.csv', 'rU') as infile:
+  # read the file as a dictionary for each row ({header : value})
+  reader = csv.DictReader(infile)
+  data = {}
+  for row in reader:
+    for header, value in row.items():
+      try:
+        data[header].append(value)
+      except KeyError:
+        data[header] = [value]
+# extract the variables you want
+# adds lon, lat tuples from csv into new list called lat_lon 
+names = data['name']
+lat = data['latitude']
+lon = data['longitude']
+for i in range(0,len(lat)):
+    lat_lon.append((lon[i],lat[i]))
